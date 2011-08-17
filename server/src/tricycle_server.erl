@@ -12,7 +12,7 @@ start_link() ->
 
 %%%---------- Implementation - listener -----------------------------
 init_listener(Port) ->
-    {ok,SrvSock} = gen_tcp:listen(Port, [binary,
+    {ok,SrvSock} = gen_tcp:listen(Port, [list,
 					 {reuseaddr, true},
 					 {active, false},
 					 {packet, line}]),
@@ -48,8 +48,10 @@ handler_loop(Sock) ->
 	    ok = gen_tcp:close(Sock)
     end.
 
-handle_line(_Line, _Sock) ->
-    'TODO'.
+handle_line(Line, _Sock) ->
+    tricycle_handle_commands:handle_command(Line).
+
+	
 
 %%%---------- Utilities ---------------------------------------
 default(undefined, Default) -> Default;
