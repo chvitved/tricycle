@@ -11,4 +11,12 @@ handle_line(["Start-CI", Revision]) ->
     {Host,Port} = tricycle_config:hudson_address(),
     %% TODO: Make project name configurable as well...
     URL = lists:flatten(io_lib:format("http://~s:~b/job/tricycle/buildWithParameters?revision=~s", [Host,Port,Revision])),
-    ok = httpc:request(get, {URL, []}, [], []).
+    ok = httpc:request(get, {URL, []}, [], []),
+    {ok, []}; % TODO
+
+handle_line(["CI-Build-Status", BuildID]) ->
+    %% TODO
+    {ok, ["404", "http://dummylink/" ++ BuildID]};
+
+handle_line([UnknownCommand | Args]) ->
+    error({unknown_command, UnknownCommand, Args}).

@@ -50,6 +50,14 @@ handler_loop(Sock) ->
 	    ok
     end.
 
-handle_line(Line, _Sock) ->
-    tricycle_handle_commands:handle_command(Line).
-
+handle_line(Line, Sock) ->
+    Reply =
+	try tricycle_handle_commands:handle_command(Line) of
+	    {ok, Results} ->
+		["OK ", string:join(Results, " ")];
+	    {error, Reason} ->
+		["ERROR ", io_lib:format("~p", [Reason])]
+	catch _:Err ->
+		["FATAL ", io_lib:format("~p", [Err])]
+	end,
+    ok = gen_tcp:send(Sock, [Reply | "\n"]).
