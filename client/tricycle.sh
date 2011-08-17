@@ -4,4 +4,4 @@
 LIBDIR=`dirname "$0"`
 source "$LIBDIR/tricycle_lib.sh"
 
-usage
+perform_command "$@"
