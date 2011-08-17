@@ -1,5 +1,14 @@
 			CLIENT-SERVER PROTOCOL
 			line-based, textual
+# Conventions:
+# 0. Each client request is one line; each server response is one line.
+# 1. First word in client request is a verb.
+#    (The verb is 'Get' for commands without side effects.)
+# 2. First token in server response is one of
+#    FATAL - Command not understood
+#    ERROR - Command understood but could not be performed
+#    OK    - Command performed; following columns contains results.
+
 
 C: Get-Ticket-Name <ticketID>
 S: OK <name>
@@ -7,7 +16,7 @@ S: OK <name>
 C: Start-CI <revision>
 S: OK <buildID> <link>
 ----
-C: CI-Build-Status <buildID>
+C: Get-CI-Build-Status <buildID>
 S: OK <statuscode> <link>
 // NOT_STARTED | BUILDING | SUCCESS | FAILURE // 404, 202, 200, 400
 ----
