@@ -1,0 +1,12 @@
+			Tricycle configuration
+
+========== Client-side configuration ====================
+Configuration resides in ?? file.
+- Server host & port
+
+========== Server-side configuration ====================
+Configuration resides in .app file.
+- Server port
+- CI host & port
+- Jira host & port
+
