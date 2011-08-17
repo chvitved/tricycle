@@ -15,16 +15,16 @@ jira_address() -> check_address(get_env(jira_address)).
 
 %%%---------- Helpers ---------------------------------------
 get_env(Key, Default) ->
-    default(application:get_env(tricycle, Key), Default).
+    case application:get_env(tricycle, Key) of
+	undefined -> Default;
+	{ok, Value} -> Value
+    end.
 
 get_env(Key) ->
     case application:get_env(tricycle, Key) of
 	undefined -> error({not_configured, Key});
-	Value -> Value
+	{ok,Value} -> Value
     end.
-
-default(undefined, Default) -> Default;
-default(Value, _Default) -> Value.
 
 check_address({Host, Port}=Addr) when is_list(Host), is_integer(Port) -> Addr;
 check_address(X) -> error({not_a_valid_address, X}).

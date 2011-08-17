@@ -8,5 +8,7 @@ handle_command(Line) ->
 
 handle_line(["Start-CI", Revision]) ->
     error_logger:info_msg("Triggering build of revision ~p ~n", [Revision]),
-    URL = "http://localhost:8080/job/tricycle/buildWithParameters?revision=" ++ Revision,
-    httpc:request(get, {URL, []}, [], []).
+    {Host,Port} = tricycle_config:hudson_address(),
+    %% TODO: Make project name configurable as well...
+    URL = lists:flatten(io_lib:format("http://~s:~b/job/tricycle/buildWithParameters?revision=~s", [Host,Port,Revision])),
+    ok = httpc:request(get, {URL, []}, [], []).
