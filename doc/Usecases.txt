@@ -1,0 +1,40 @@
+==== Use case: mindre fix til bug som har ticket.
+
+$ tri jira 415
+> Switched to #415 "Login does not work on MacOSX"
+> Updating Jira #415...done
+> Created branch jira415_Login_does_not_work_on_MacOSX
+
+...kodning...
+
+$ tri ci
+> Starting CI; cf. http://ci.example.com/ci/build/4688
+
+$ tri ?
+> Build has not yet finished. (Elapsed: 2m3s)
+$ tri ?
+> Build SUCCEEDED
+
+$ tri resolve
+> Resolve Jira ticket as
+> [c]losed
+> [w]ontfix
+> fixed by [n]ot in test
+> ? "c"
+>
+> Merging...done, as revision d6s7a8ddaf (link)
+> Resolving Jira #415...done
+
+==== Use case: mindre fix til bug som har ticket - for tidlig commit
+$ tri jira 415
+> Switched to #415 "Login does not work on MacOSX"
+
+...kodning...
+
+$ tri resolve
+> The current revision has not been successfully tested.
+> (Current revision is 6df7a, last succesful test was 54325fed)
+> Send to CI now? "y"
+[...then runs "tri ci"...]
+
+==== Use case: større bugfix - til bug som har ticket.

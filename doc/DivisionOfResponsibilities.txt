@@ -1,0 +1,23 @@
+========== Division of responsibilities: ===================
+==== Client knowledge:
+Current Jira nr.
+(Last Jira nr.)
+
+==== Client actions:
+Local git manipulation
+
+==============================
+
+==== Server knowledge:
+Jira nr -> title mapping
+CI build status readoff
+Status of last (N) builds (per user?)
+
+==== Server actions:
+Jira write access
+CI change access
+Merge of successful branch
+
+
+============================================================
+

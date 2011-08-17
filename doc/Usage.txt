@@ -1,0 +1,20 @@
+
+====================
+tri jira <ticket nr>
+    Switch to a Jira ticket.
+[Hent og udskriv ticket-titel; gem ticketnr. lokalt.]
+
+tri ci
+    Send current code tree to Continuous Integration server.
+[Lav en "git push LOCALBR:REMOTEBR"; trigger CI.
+Udskriv bygge-ID.
+Vent på resultat?]
+
+tri commit
+    Push to Git.
+[Kør "git push".]
+
+tri resolve <resolution>
+    Resolve Jira ticket and merge.
+
+
