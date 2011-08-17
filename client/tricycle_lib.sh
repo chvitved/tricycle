@@ -85,6 +85,38 @@ function server_request {
     echo "$response"
 }
 
+#==================== Local state handling ===================================
+TICKET_ID_FILE="./.tricycle-ticket"
+BUILD_ID_FILE="./.tricycle-build"
+
+function get_local {
+    local file="$1"
+    cat "$file" 2>/dev/null
+}
+
+function set_local {
+    local file="$1" value="$2"
+    echo "$value" > "$file"
+}
+
+function get_local_ticketID {
+    get_local "$TICKET_ID_FILE"
+}
+
+function set_local_ticketID {
+    local ticketID="$1"
+    set_local "$TICKET_ID_FILE" "$ticketID"
+}
+
+function get_local_buildID {
+    get_local "$BUILD_ID_FILE"
+}
+
+function set_local_buildID {
+    local buildID="$1"
+    set_local "$BUILD_ID_FILE" "$buildID"
+}
+
 #==================== Git stuff ===================================
 
 function current_git_revision {
@@ -98,7 +130,8 @@ function current_build_ID {
 #==================== Individual commands ===================================
 
 function show_ticket_id {
-    echo "<show Jira ID>" # TODO
+    local ticketID=`get_local_ticketID`
+    echo "Ticket ID is $ticketID"
 }
 
 function set_ticket_id {
@@ -107,7 +140,9 @@ function set_ticket_id {
     connect_to_server
     local resp=`server_request "Get-Ticket-Name $id"`
     echo "ticketID set :: $resp" # TODO
-    # TODO: save new ticket name
+    # TODO: error handling
+
+    set_local_ticketID "$id"
 }
 
 function start_ci_build {
