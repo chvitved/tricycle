@@ -150,7 +150,10 @@ function start_ci_build {
     connect_to_server
     local resp=`server_request "Start-CI $rev"`
     echo "build started for $rev :: $resp"
-    # TODO: figure out build ID, and save it
+
+    # TODO: figure out build ID
+    local buildID='dummy'
+    set_local_buildID "$buildID"
 }
 
 function show_build_status {
