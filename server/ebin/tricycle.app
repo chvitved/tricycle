@@ -4,7 +4,8 @@
   {vsn, "1"},
   {modules, [
              tricycle_app,
-             tricycle_sup
+             tricycle_sup,
+             tricycle_server
             ]},
   {registered, []},
   {applications, [
