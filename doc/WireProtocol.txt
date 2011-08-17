@@ -1,7 +1,7 @@
 			CLIENT-SERVER PROTOCOL
 			line-based, textual
 
-C: Get-Ticket-Name <nr>
+C: Get-Ticket-Name <ticketID>
 S: OK <name>
 ----
 C: Start-CI <revision>
@@ -11,7 +11,8 @@ C: CI-Build-Status <buildID>
 S: OK <statuscode> <link>
 // NOT_STARTED | BUILDING | SUCCESS | FAILURE // 404, 202, 200, 400
 ----
-
+C: Mark-Ticket-In-Progress <ticketID>
+S: OK | ERROR <reasonText>
 
 ----
 
