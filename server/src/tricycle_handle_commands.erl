@@ -7,6 +7,6 @@ handle_command(Line) ->
 	handle_line(Tokens).
 
 handle_line(["Start-CI", Revision]) ->
-	io:format("triggering build of revision ~p ~n", [Revision]),
-	httpc:request(get, {"http://localhost:8080/job/tricycle/buildWithParameters?revision=" ++ Revision, []}, [], []).
-	
+    error_logger:info_msg("Triggering build of revision ~p ~n", [Revision]),
+    URL = "http://localhost:8080/job/tricycle/buildWithParameters?revision=" ++ Revision,
+    httpc:request(get, {URL, []}, [], []).
