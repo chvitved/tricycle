@@ -24,5 +24,7 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+    {ok, { {one_for_one, 5, 10},
+	   [{tricycle_server, {tricycle_server, start_link, []},
+	    permanent, 3000, worker, [tricycle_server]}]} }.
 
