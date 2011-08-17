@@ -1,5 +1,5 @@
 #!/bin/bash
 # Start the server (mainly for testing)
 
-#erl -boot start_sasl -pa ebin/ -eval 'tricycle_server:start_link().'
-erl -boot start_sasl -pa ebin/ -eval 'application:start(tricycle).'
+# TODO: Make a proper boot file.
+erl -boot start_sasl -pa ebin/ -eval 'application:start(inets), application:start(tricycle).'
