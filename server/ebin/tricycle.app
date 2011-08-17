@@ -6,6 +6,7 @@
              tricycle_app,
              tricycle_sup,
              tricycle_server,
+	     tricycle_config,
              tricycle_handle_commands
             ]},
   {registered, []},

@@ -3,11 +3,9 @@
 -export([start_link/0]).
 -export([init_listener/1, init_handler/1]).
 
--define(DEFAULT_PORT, 9193).
-
 %%%---------- API ----------------------------------------
 start_link() ->
-    Port = default(application:get_env(tricycle, port), ?DEFAULT_PORT),
+    Port = tricycle_config:server_port(),
     proc_lib:start_link(?MODULE, init_listener, [Port]).
 
 %%%---------- Implementation - listener -----------------------------
@@ -55,6 +53,3 @@ handler_loop(Sock) ->
 handle_line(Line, _Sock) ->
     tricycle_handle_commands:handle_command(Line).
 
-%%%---------- Utilities ---------------------------------------
-default(undefined, Default) -> Default;
-default(Value, _Default) -> Value.
