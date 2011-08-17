@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#==================== Error handling ========================================
 function usage {
     if [ $# -gt 0 ] ; then echo "$*" >&2 ; fi
     cat >&2 <<EOF
@@ -27,17 +28,35 @@ function bad_usage {
     usage "$@" ; exit 1
 }
 
+#==================== Communication ========================================
+
+#==================== Individual commands ===================================
+function show_ticket_id {
+    echo "<show Jira ID>" # TODO
+}
+
+function set_ticket_id {
+    local id="$1"
+    echo "<set Jira ID to $id>" # TODO
+}
+
+function show_build_status {
+    echo "<show build status>" # TODO
+}
+
+#==================== Command-line parsing ==============================
+
 function perform_command {
     local cmd="$1"
     case "$cmd" in
 	jira)
 	    case $# in
-		1) echo "<show Jira ID>" ;;
-		2) echo "<set Jira ID to $2>" ;;
+		1) show_ticket_id ;;
+		2) set_ticket_id "$2" ;;
 		*) bad_usage
 	    esac
 	    ;;
-	"?") echo "<show build status>" ;;
+	"?") show_build_status ;;
 	*) bad_usage "Unknown command '$cmd'." ;;
     esac
 }
