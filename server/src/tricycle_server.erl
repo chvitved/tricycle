@@ -32,7 +32,11 @@ listener_loop(SrvSock) ->
 %%%---------- Implementation - client handler -------------------
 init_handler(Sock) ->
     error_logger:info_msg("[~p] Incoming connection\n", [Sock]),
-    handler_loop(Sock).
+    try
+	handler_loop(Sock)
+    after
+	gen_tcp:close(Sock)
+    end.
 
 handler_loop(Sock) ->
     case gen_tcp:recv(Sock, 0) of
@@ -45,13 +49,11 @@ handler_loop(Sock) ->
 	    ok;
 	{error, Err} ->
 	    error_logger:error_msg("[~p] Error from recv(): ~p\n", [Sock, Err]),
-	    ok = gen_tcp:close(Sock)
+	    ok
     end.
 
 handle_line(Line, _Sock) ->
     tricycle_handle_commands:handle_command(Line).
-
-	
 
 %%%---------- Utilities ---------------------------------------
 default(undefined, Default) -> Default;
