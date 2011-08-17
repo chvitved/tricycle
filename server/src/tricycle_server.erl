@@ -13,6 +13,7 @@ start_link() ->
 %%%---------- Implementation - listener -----------------------------
 init_listener(Port) ->
     {ok,SrvSock} = gen_tcp:listen(Port, [binary,
+					 {reuseaddr, true},
 					 {active, false},
 					 {packet, line}]),
     error_logger:info_msg("Listening on port ~p\n", [Port]),
