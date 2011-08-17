@@ -31,6 +31,9 @@ function bad_usage {
     usage "$@" ; exit 1
 }
 
+function error {
+    echo "$@" >&2 ; exit 2
+}
 #==================== Configuration ========================================
 CONFIG_FILE="./.tricycle"
 function read_configuration {
@@ -51,20 +54,49 @@ function read_configuration {
 
     # Export:
     # (Why does 'declare' make variables local? -ES)
-    cfg_server_host="$tmp_cfg_server_host"
+    cfg_server_host=${tmp_cfg_server_host}
+    cfg_server_port=${tmp_cfg_server_port:=9193}
 }
 
 function dump_configuration {
     echo '/---- Tricycle client configuration'
-    for var in "${!cfg_*}" ; do
+    for var in ${!cfg_*} ; do
 	printf "%-16s = %s\n" "${var#cfg_}" `eval "echo \\$$var"`
     done
     echo '\---- Tricycle client configuration'
 }
 
 #==================== Communication ========================================
+function connect_to_server {
+    [ -n "$cfg_server_host" ] || error "Config error: 'server_host' not set."
+    [ -n "$cfg_server_port" ] || error "Config error: 'server_port' not set."
+    exec 3<> "/dev/tcp/$cfg_server_host/$cfg_server_port"
+    true
+}
+
+function server_request {
+    local request="$1"
+    echo "Server request: '$request'" >&2
+    echo "$request" >&3
+
+    local response
+    read response <&3
+    echo "Server response: '$response'" >&2
+    echo "$response"
+}
+
+#==================== Git stuff ===================================
+
+function current_git_revision {
+    git rev-parse --verify HEAD || error "Could not figure out current local revision :-("
+}
+
+function current_build_ID {
+    echo "dummyBuildID" # TODO
+}
 
 #==================== Individual commands ===================================
+
 function show_ticket_id {
     echo "<show Jira ID>" # TODO
 }
@@ -74,8 +106,19 @@ function set_ticket_id {
     echo "<set Jira ID to $id>" # TODO
 }
 
+function start_ci_build {
+    local rev=`current_git_revision`
+    connect_to_server
+    local resp=`server_request "Start-CI $rev"`
+    echo "build started for $rev :: $resp"
+    # TODO: figure out build ID, and save it
+}
+
 function show_build_status {
-    echo "<show build status>" # TODO
+    local buildID=`current_build_ID`
+    connect_to_server
+    local resp=`server_request "CI-Build-Status $buildID"`
+    echo "build status for $buildID :: $resp"
 }
 
 #==================== Command-line parsing ==============================
@@ -98,6 +141,12 @@ function perform_command {
 	config)
 	    case $# in
 		1) dump_configuration ;;
+		*) bad_usage
+	    esac
+	    ;;
+	ci)
+	    case $# in
+		1) start_ci_build ;;
 		*) bad_usage
 	    esac
 	    ;;
