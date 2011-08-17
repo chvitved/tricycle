@@ -103,7 +103,11 @@ function show_ticket_id {
 
 function set_ticket_id {
     local id="$1"
-    echo "<set Jira ID to $id>" # TODO
+    echo "<set Jira ID to $id>"
+    connect_to_server
+    local resp=`server_request "Get-Ticket-Name $id"`
+    echo "ticketID set :: $resp" # TODO
+    # TODO: save new ticket name
 }
 
 function start_ci_build {
