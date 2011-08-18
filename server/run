@@ -2,4 +2,4 @@
 # Start the server (mainly for testing)
 
 # TODO: Make a proper boot file.
-erl -boot start_sasl -pa ebin/ -eval 'application:start(inets), application:start(tricycle).'
+erl -boot start_sasl -pa ebin/ -tricycle hudson_address '{"localhost",8080}' -eval 'application:start(inets), application:start(tricycle).'

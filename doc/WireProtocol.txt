@@ -13,10 +13,10 @@
 C: Get-Ticket-Name <ticketID>
 S: OK <name>
 ----
-C: Start-CI <revision>
+C: Start-CI <project_name> <revision>
 S: OK <buildID> <link>
 ----
-C: Get-CI-Build-Status <buildID>
+C: Get-CI-Build-Status <project_name> <buildID>
 S: OK <statuscode> <link>
 // NOT_STARTED | BUILDING | SUCCESS | FAILURE // 404, 202, 200, 400
 ----
