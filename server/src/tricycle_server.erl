@@ -58,7 +58,7 @@ handle_line(Line, Sock) ->
 	    {error, Reason} ->
 		["ERROR ", io_lib:format("~p", [Reason])]
 	catch _:Err ->
-		error_logger:error_msg("[~p] Operation ~p failed: ~p\n", [Sock, Line, Err]),
+		error_logger:error_msg("[~p] Operation ~p failed: ~p\n  at ~p\n", [Sock, Line, Err, erlang:get_stacktrace()]),
 		["FATAL ", io_lib:format("~p", [Err])]
 	end,
     ok = gen_tcp:send(Sock, [Reply | "\n"]).

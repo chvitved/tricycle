@@ -30,7 +30,7 @@ handle_line(["CI-Build-Status", Project_name, BuildID]) ->
     {Host,Port} = tricycle_config:hudson_address(),
     URL = build_url(Host,Port,Project_name,BuildID),
     JSonURL = URL ++ "/api/json",
-    Body = fetch_url(JSonURL),
+    Body = fetch_url(JSonURL), % TODO: Handle case "build ID not found"
 
     error_logger:info_msg("fetched build url ~s~n", [URL]),
     {match, [[Is_building_string]]} = re:run(Body, "\\\"building\\\":\\s*(\\w+)\\s*", [global,{capture,[1],list}]),
