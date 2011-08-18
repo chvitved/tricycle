@@ -63,8 +63,8 @@ build_status_body_to_statuscode(404, _Body) ->
 build_status_body_to_statuscode(200, Body) ->
     error_logger:info_msg("DB| build status body: ~s~n", [Body]),
 
-    {match, [[Is_building_string]]} = re:run(Body, "\\\"building\\\":\\s*(\\w+)\\s*", [global,{capture,[1],list}]),
-    {match, [[Result_string]]} = re:run(Body, "\\\"result\\\":\\s*\\\"(\\w+)\\\"\\s*", [global,{capture,[1],list}]),
+    {match, [[Is_building_string]]} = re:run(Body, "\\\"building\\\":\\s*(\\w+)", [global,{capture,[1],list}]),
+    {match, [[Result_string]]} = re:run(Body, "\\\"result\\\":\\s*\\\"?(\\w+)", [global,{capture,[1],list}]),
 
     case {Is_building_string, Result_string} of
 	{"false", "null"}    -> 404;
