@@ -22,7 +22,7 @@ handle_line(["Start-CI", ProjectName, Revision]) ->
     {ok, 200, _Body} = fetch_url(URL),
     
     error_logger:info_msg("Triggered build server with revision ~p~n", [Revision]),
-    Build_url = build_url(Host,Port,Project_name,Next_build_id),
+    Build_url = build_url(Host,Port,ProjectName,Next_build_id),
     error_logger:info_msg("build url ~s~n", [Build_url]),
     {ok, [Next_build_id, Build_url]};
 
@@ -58,7 +58,7 @@ build_url(Host, Port, ProjectName, BuildID) ->
 
 status_url(Host, Port, ProjectName) ->
     lists:flatten(io_lib:format("http://~s:~b/job/~s/api/json?depth=0",
-				[Host,Port, ProjectName]))
+				[Host,Port, ProjectName])).
 
 build_status_body_to_statuscode(404, _Body) ->
     %% Build page does not exist - assume that the build just haven't started yet.
