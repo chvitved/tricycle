@@ -38,7 +38,7 @@ function error {
 CONFIG_FILE="./.tricycle"
 function read_configuration {
     if [ -f "$CONFIG_FILE" -a -r "$CONFIG_FILE" ] ; then
-	echo "Reading config..."
+	#echo "DB| Reading config..."
 	shopt -s extglob # Used for trimming
 	while s=""; read s || [ -n "$s" ] ; do
 	    if [[ "$s" == "#"* ]]  ; then continue; fi # Comment line
@@ -90,9 +90,17 @@ function connect_to_server {
 
 function server_request {
     local request="$1"
-    echo "Server request: '$request'" >&2
-    echo "$request" >&3
+    send_server_request "$request"
+    read_server_response
+}
 
+function send_server_request {
+    local request="$1"
+    #echo "DB| Server request: '$request'" >&2
+    echo "$request" >&3
+}
+
+function read_server_response {
     local response
     read response <&3
     echo "Server response: '$response'" >&2
@@ -137,8 +145,8 @@ function current_git_revision {
     git rev-parse --verify HEAD || error "Could not figure out current local revision :-("
 }
 
-function current_build_ID {
-    echo "dummyBuildID" # TODO
+function get_project_name {
+    echo "tricycle" # TODO
 }
 
 #==================== Individual commands ===================================
@@ -161,20 +169,57 @@ function set_ticket_id {
 
 function start_ci_build {
     local rev=`current_git_revision`
-    connect_to_server
-    local resp=`server_request "Start-CI $rev"`
-    echo "build started for $rev :: $resp"
+    local project_name=`get_project_name`
 
-    # TODO: figure out build ID
-    local buildID='dummy'
-    set_local_buildID "$buildID"
+    connect_to_server
+    send_server_request "Start-CI $project_name $rev"
+
+    local status result
+    read status result <&3
+    case "$status" in
+	OK)
+	    # Parse result:
+	    local buildID link
+	    read buildID link < <( echo "$result" )
+
+	    # Actions:
+	    set_local_buildID "$buildID"
+	    echo "Build started for $rev ."
+	    echo "Build status URL: $link"
+	    ;;
+	*)
+	    echo "Failed: $status $buildID $link"
+    esac
 }
 
 function show_build_status {
-    local buildID=`current_build_ID`
+    local buildID=`get_local_buildID`
+    local project_name=`get_project_name`
+
     connect_to_server
-    local resp=`server_request "CI-Build-Status $buildID"`
-    echo "build status for $buildID :: $resp"
+    send_server_request "CI-Build-Status $project_name $buildID"
+
+    local status result
+    read status result <&3
+    case "$status" in
+	OK)
+	    # Parse result:
+	    local buildStatus link
+	    read buildStatus link < <( echo "$result" )
+
+	    # Actions:
+	    echo -n "Build status for #$buildID: "
+	    case "$buildStatus" in
+		404) echo "Not started";;
+		202) echo "Build in progress  ($link)";;
+		200) echo "SUCCESS";;
+		400) echo "FAILURE";;
+		*)   echo "Unknown: $result"
+		esac
+	    ;;
+	*)
+	    echo "Failed: $status $result"
+    esac
 }
 
 #==================== Command-line parsing ==============================

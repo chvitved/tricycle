@@ -18,7 +18,7 @@ S: OK <buildID> <link>
 ----
 C: Get-CI-Build-Status <project_name> <buildID>
 S: OK <statuscode> <link>
-// NOT_STARTED | BUILDING | SUCCESS | FAILURE // 404, 202, 200, 400
+<statuscode> ::= 404, 202, 200, 400 // NOT_STARTED | BUILDING | SUCCESS | FAILURE
 ----
 C: Mark-Ticket-In-Progress <ticketID>
 S: OK | ERROR <reasonText>
