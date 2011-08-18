@@ -208,12 +208,12 @@ function show_build_status {
 	    read buildStatus link < <( echo "$result" )
 
 	    # Actions:
-	    echo -n "Build status: "
+	    echo -n "Build status for #$buildID: "
 	    case "$buildStatus" in
 		404) echo "Not started";;
 		202) echo "Build in progress  ($link)";;
-		200) echo "SUCCESS!";;
-		400) echo "FAILURE!";;
+		200) echo "SUCCESS";;
+		400) echo "FAILURE";;
 		*)   echo "Unknown: $result"
 		esac
 	    ;;
