@@ -2,4 +2,4 @@
 # Start the server (mainly for testing)
 
 # TODO: Make a proper boot file.
-erl -boot start_sasl -pa ebin/ -config app.config -eval 'application:start(inets), application:start(tricycle).'
+erl -boot start_sasl -pa ebin/ -config app.config -eval '[ok=application:start(X) || X <- [inets, crypto, public_key, ssl, tricycle]].'
