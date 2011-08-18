@@ -28,21 +28,22 @@ handle_line(["Start-CI", Project_name, Revision]) ->
 
 handle_line(["CI-Build-Status", Project_name, BuildID]) ->
     {Host,Port} = tricycle_config:hudson_address(),
-    URL = build_url(Host,Port,Project_name,BuildID) ++ "/api/json",
-    Body = fetch_url(URL), 
-    
+    URL = build_url(Host,Port,Project_name,BuildID),
+    JSonURL = URL ++ "/api/json",
+    Body = fetch_url(JSonURL),
+
     error_logger:info_msg("fetched build url ~s~n", [URL]),
     {match, [[Is_building_string]]} = re:run(Body, "\\\"building\\\":\\s*(\\w+)\\s*", [global,{capture,[1],list}]),
     {match, [[Result_string]]} = re:run(Body, "\\\"result\\\":\\s*\\\"(\\w+)\\\"\\s*", [global,{capture,[1],list}]),
-    
-    {Status_code, Message} = 
-        case {Is_building_string, Result_string} of 
-            {"false", "null"} -> {404, "NOT_STARTED"};
-            {"true", "null"} -> {202, "BUILDING"};
-            {"false", "SUCCESS"} -> {200, "SUCCESS"};
-            {"false", "FAILURE"} -> {400, "FAILURE"}
+
+    StatusCode =
+        case {Is_building_string, Result_string} of
+            {"false", "null"}    -> 404;
+            {"true", "null"}     -> 202;
+            {"false", "SUCCESS"} -> 200;
+            {"false", "FAILURE"} -> 400
         end,
-    {ok, [integer_to_list(Status_code), Message]};
+    {ok, [integer_to_list(StatusCode), URL]};
 
 handle_line([UnknownCommand | Args]) ->
     error({unknown_command, UnknownCommand, Args}).

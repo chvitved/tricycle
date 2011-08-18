@@ -141,6 +141,10 @@ function current_build_ID {
     echo "dummyBuildID" # TODO
 }
 
+function get_project_name {
+    echo "tricycle" # TODO
+}
+
 #==================== Individual commands ===================================
 
 function show_ticket_id {
@@ -172,8 +176,10 @@ function start_ci_build {
 
 function show_build_status {
     local buildID=`current_build_ID`
+    local project_name=`get_project_name`
+
     connect_to_server
-    local resp=`server_request "CI-Build-Status $buildID"`
+    local resp=`server_request "CI-Build-Status $buildID $project_name"`
     echo "build status for $buildID :: $resp"
 }
 
