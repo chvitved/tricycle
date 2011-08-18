@@ -6,19 +6,19 @@ handle_command(Line) ->
     Tokens = string:tokens(Line, " \r\n"),
     handle_line(Tokens).
 
-handle_line(["Start-CI", Project_name, Revision]) ->
+handle_line(["Start-CI", ProjectName, Revision]) ->
     {Host,Port} = tricycle_config:hudson_address(),
     
     %%Getting build id for this build
     %%TODO this is not a safe way of gettng the build id
-    Status_url = lists:flatten(io_lib:format("http://~s:~b/job/~s/api/json?depth=0", [Host,Port, Project_name])),
+    Status_url = status_url(Host, Port, ProjectName),
     error_logger:info_msg("Getting next build id from jenkins at ~s~n", [Status_url]),
     {ok, 200, Body} = fetch_url(Status_url),
     {match, [[Next_build_id]]} = re:run(Body, "\\\"nextBuildNumber\\\":\\s*(\\d+)\\s*", [global,{capture,[1],list}]),
     
     %% TODO: Make project name configurable as well...
     %% Trigger build server
-    URL = lists:flatten(io_lib:format("http://~s:~b/job/~s/buildWithParameters?revision=~s", [Host,Port,Project_name,Revision])),
+    URL = lists:flatten(io_lib:format("http://~s:~b/job/~s/buildWithParameters?revision=~s", [Host,Port,ProjectName,Revision])),
     {ok, 200, _Body} = fetch_url(URL),
     
     error_logger:info_msg("Triggered build server with revision ~p~n", [Revision]),
@@ -52,10 +52,13 @@ fetch_url(Url) ->
 	    {error, {could_not_fetch_url, Url, Err}}
     end.
 
-build_url(Host, Port, Project_name, BuildID) ->
-    URL = io_lib:format("http://~s:~b/job/~s/~s", [Host,Port,Project_name,BuildID]),
-    %%error_logger:info_msg("url: ~s~n", [URL]),
-    lists:flatten(URL).
+build_url(Host, Port, ProjectName, BuildID) ->
+    lists:flatten(io_lib:format("http://~s:~b/job/~s/~s",
+				[Host,Port,ProjectName,BuildID])).
+
+status_url(Host, Port, ProjectName) ->
+    lists:flatten(io_lib:format("http://~s:~b/job/~s/api/json?depth=0",
+				[Host,Port, ProjectName]))
 
 build_status_body_to_statuscode(404, _Body) ->
     %% Build page does not exist - assume that the build just haven't started yet.
