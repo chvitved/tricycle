@@ -4,5 +4,5 @@
 LIBDIR=`dirname "$0"`
 source "$LIBDIR/tricycle_lib.sh"
 
-# TODO: cd to git root
+cd_to_git_repo_root
 perform_command "$@"

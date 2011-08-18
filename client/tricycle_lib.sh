@@ -66,6 +66,20 @@ function dump_configuration {
     echo '\---- Tricycle client configuration'
 }
 
+function cd_to_git_repo_root {
+    local org_dir=`pwd`
+    local dir="$org_dir"
+    while ! [ -d "$dir/.git" ] ; do
+	local dir2=`dirname "$dir"`
+	if [[ "$dir" == "$dir2" ]] ; then
+	    error "Not in a Git repo...  sorry, I can't work like this."
+	fi
+	dir="$dir2"
+    done
+    #echo "DB| Git repo root is '$dir'"
+    cd "$dir"
+}
+
 #==================== Communication ========================================
 function connect_to_server {
     [ -n "$cfg_server_host" ] || error "Config error: 'server_host' not set."
